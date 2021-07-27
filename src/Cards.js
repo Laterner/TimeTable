@@ -1,8 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, ListViewBase, SafeAreaView, StyleSheet } from 'react-native';
+import { Text, View, FlatList, TouchableHighlight, SafeAreaView, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
-import { TouchableHighlight } from 'react-native';
 import { ScrollView } from 'react-native';
+
+import { makeStyles } from '@material-ui/core/styles';
+
+import {
+    AppBar,
+    Card,
+    Container,
+    Tab,
+    Tabs,
+    Typography,
+  } from '@material-ui/core';
+
+  const useItemStyles = makeStyles({
+    root: {
+      padding: 16,
+    },
+    time: {
+      fontWeight: 'bold',
+    },
+  });
 
 export default function Cards( {route} ) {
     const [isLoading, setIsLoading] = useState(true);
@@ -28,18 +47,88 @@ useEffect(() => {
   }, []);
 
 //   console.log(data?.Понедельник);
-  return (
-    <View style={styles.container}>
+    const classes = useItemStyles();
+    return (
+        <ScrollView style={styles.container}>
+            <Card className={classes.root}>
+                <Typography
+                    className={classes.time}
+                    variant="body1"
+                >{`$start}-end`}</Typography>
+                <Typography variant="body1">subjec</Typography>
+                <Typography variant="body1">{`$lecturerLastName $lecturerFirstName[0]. $lecturerPatronymic[0].`}</Typography>
+                <Typography variant="body1">desc</Typography>
+            </Card>
+            <Text style={styles.oglav}>Нечётная неделя</Text>
 
-        <Text style={styles.oglav}>Нечётная неделя</Text>
+            <Text style={styles.weekday}>Понедельник</Text>
+            
+            <FlatList
+                scrollEnabled={false}
+                data={dataOdd?.Понедельник}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                    <Text style={styles.paragraph}>
+                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
+                    </Text>
+                )}
+            />
+
+            <Text style={styles.weekday}>Вторник</Text>
+            <FlatList
+                scrollEnabled={false}
+                data={dataOdd?.Вторник}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                    <Text style={styles.paragraph}>
+                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
+                    </Text>
+                )}
+            />
+
+            <Text style={styles.weekday}>Среда</Text>
+            <FlatList
+                scrollEnabled={false}
+                data={dataOdd?.Среда}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                    <Text style={styles.paragraph}>
+                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
+                    </Text>
+                )}
+            />
+
+            <Text style={styles.weekday}>Четверг</Text>
+            <FlatList
+                scrollEnabled={false}
+                data={dataOdd?.Четверг}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                    <Text style={styles.paragraph}>
+                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
+                    </Text>
+                )}
+            />
+
+            <Text style={styles.weekday}>Пятница</Text>
+            <FlatList
+                scrollEnabled={false}
+                data={dataOdd?.Пятница}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                    <Text style={styles.paragraph}>
+                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
+                    </Text>
+                )}
+            />
+
+
+        <Text style={styles.oglav}>Чётная неделя</Text>
 
         <Text style={styles.weekday}>Понедельник</Text>
-        <ScrollView>
-            
-        </ScrollView>
         <FlatList
             scrollEnabled={false}
-            data={dataOdd?.Понедельник}
+            data={dataEven?.Понедельник}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
                 <Text style={styles.paragraph}>
@@ -51,7 +140,7 @@ useEffect(() => {
         <Text style={styles.weekday}>Вторник</Text>
         <FlatList
             scrollEnabled={false}
-            data={dataOdd?.Вторник}
+            data={dataEven?.Вторник}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
                 <Text style={styles.paragraph}>
@@ -63,7 +152,7 @@ useEffect(() => {
         <Text style={styles.weekday}>Среда</Text>
         <FlatList
             scrollEnabled={false}
-            data={dataOdd?.Среда}
+            data={dataEven?.Среда}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
                 <Text style={styles.paragraph}>
@@ -75,7 +164,7 @@ useEffect(() => {
         <Text style={styles.weekday}>Четверг</Text>
         <FlatList
             scrollEnabled={false}
-            data={dataOdd?.Четверг}
+            data={dataEven?.Четверг}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
                 <Text style={styles.paragraph}>
@@ -87,7 +176,7 @@ useEffect(() => {
         <Text style={styles.weekday}>Пятница</Text>
         <FlatList
             scrollEnabled={false}
-            data={dataOdd?.Пятница}
+            data={dataEven?.Пятница}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
                 <Text style={styles.paragraph}>
@@ -95,76 +184,14 @@ useEffect(() => {
                 </Text>
             )}
         />
-
-
-    <Text style={styles.oglav}>Чётная неделя</Text>
-
-    <Text style={styles.weekday}>Понедельник</Text>
-    <FlatList
-        scrollEnabled={false}
-        data={dataEven?.Понедельник}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-            <Text style={styles.paragraph}>
-                {`${item?.subject}: ${item?.start} - ${item?.end}`}
-            </Text>
-        )}
-    />
-
-    <Text style={styles.weekday}>Вторник</Text>
-    <FlatList
-        scrollEnabled={false}
-        data={dataEven?.Вторник}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-            <Text style={styles.paragraph}>
-                {`${item?.subject}: ${item?.start} - ${item?.end}`}
-            </Text>
-        )}
-    />
-
-    <Text style={styles.weekday}>Среда</Text>
-    <FlatList
-        scrollEnabled={false}
-        data={dataEven?.Среда}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-            <Text style={styles.paragraph}>
-                {`${item?.subject}: ${item?.start} - ${item?.end}`}
-            </Text>
-        )}
-    />
-
-    <Text style={styles.weekday}>Четверг</Text>
-    <FlatList
-        scrollEnabled={false}
-        data={dataEven?.Четверг}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-            <Text style={styles.paragraph}>
-                {`${item?.subject}: ${item?.start} - ${item?.end}`}
-            </Text>
-        )}
-    />
-
-    <Text style={styles.weekday}>Пятница</Text>
-    <FlatList
-        scrollEnabled={false}
-        data={dataEven?.Пятница}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-            <Text style={styles.paragraph}>
-                {`${item?.subject}: ${item?.start} - ${item?.end}`}
-            </Text>
-        )}
-    />
-    </View>
-  );
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         // justifyContent: 'center',
+        flex: 1,
         paddingTop: Constants.statusBarHeight,
         backgroundColor: '#303030',
         padding: 5,
@@ -192,5 +219,35 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#fff',
         marginBottom: 20,
+    },
+});
+
+const useStyles = makeStyles({
+    appBar: {
+        height: 64,
+        alignItems: 'center',
+        flexDirection: 'row',
+        padding: '0 16px',
+    },
+    logo: {
+        width: 48,
+        height: 48,
+        marginRight: 16,
+    },
+    heading: {
+        fontSize: 24,
+    },
+    container: {
+        marginTop: 64,
+        padding: 16,
+    },
+    card: {
+        padding: 16,
+        overflow: 'visible',
+        marginBottom: 16,
+    },
+    cardText: {
+        fontSize: 18,
+        marginBottom: 16,
     },
 });

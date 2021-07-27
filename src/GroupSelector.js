@@ -29,28 +29,17 @@ useEffect(() => {
   return (
     <View style={styles.container}>
         <TextInput style={styles.serch} />
-        { 
-            isLoading &&   
-            <View style={{ flex: 1, paddingTop: 20 }}>
-                <ActivityIndicator />
-            </View>
-        }
-        {
-            !isLoading && 
-            <TouchableHighlight style={{ justifyContent: 'center', flex: 1 }}>
-                <FlatList style={styles.group_list}
-                    data={data?.items}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <TouchableHighlight onPress={() => navigation.navigate('Cards', item)}>
-                        <Text style={styles.paragraph}>
-                                {item?.name}
-                        </Text>
-                        </TouchableHighlight>
-                    )}
-                />
-            </TouchableHighlight>
-        }
+        <FlatList style={styles.group_list}
+            data={data?.items}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+                <TouchableHighlight onPress={() => navigation.navigate('Cards', item)}>
+                    <Text style={styles.paragraph}>
+                            {item?.name}
+                    </Text>
+                </TouchableHighlight>
+            )}
+        />
     </View>
   );
 }
@@ -68,13 +57,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         textAlign:'center',
         margin: 5,
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
         color: '#fff',
     },
     group_list:{
         marginTop: 5,
-        height:200,
     },
     serch: {
         backgroundColor: 'pink',
@@ -85,3 +73,26 @@ const styles = StyleSheet.create({
         color: '#fff',
     }
 });
+{/* <View style={styles.container}>
+    <TextInput style={styles.serch} />
+    { 
+        isLoading &&   
+        <View style={{ flex: 1, paddingTop: 20 }}>
+            <ActivityIndicator />
+        </View>
+    }
+    {
+        !isLoading && 
+        <FlatList style={styles.group_list}
+            data={data?.items}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+                <TouchableHighlight onPress={() => navigation.navigate('Cards', item)}>
+                    <Text style={styles.paragraph}>
+                            {item?.name}
+                    </Text>
+                </TouchableHighlight>
+            )}
+        />
+    }
+</View> */}
