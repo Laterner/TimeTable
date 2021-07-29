@@ -14,8 +14,7 @@ import {
     Tab,
     Tabs,
     Typography,
-  } from '@material-ui/core';
-import { render } from 'react-dom';
+} from '@material-ui/core';
 
 export default function Moka( {route} ) {
     const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +41,42 @@ export default function Moka( {route} ) {
             
     }, []);
 
+    var maroko = [];
+    try {
+        maroko.push(dataOdd.Понедельник);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
+    try {
+        maroko.push(dataOdd.Вторник);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
+    try {
+        maroko.push(dataOdd.Среда);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
+    try {
+        maroko.push(dataOdd.Четверг);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
+    try {
+        maroko.push(dataOdd.Пятница);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
+    try {
+        maroko.push(dataOdd.Суббота);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
+    try {
+        maroko.push(dataOdd.Воскресенье);
+    } catch (error) {
+        maroko.push({start:"none"});
+    }
 //   console.log(data?.Понедельник);
     const classes = useItemStyles();
     
@@ -57,7 +92,7 @@ export default function Moka( {route} ) {
     {
         evenMap.push(dataEven [i]);
     }
-    
+    console.log(MakeConnOdd);
 
     return (
         
