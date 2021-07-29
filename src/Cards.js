@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, TouchableHighlight, SafeAreaView, StyleSheet } from 'react-native';
+import { Text, View, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { ScrollView } from 'react-native';
 
 import { makeStyles } from '@material-ui/core/styles';
+
+import { useMemo } from 'react';
 
 import {
     AppBar,
@@ -13,178 +15,130 @@ import {
     Tabs,
     Typography,
   } from '@material-ui/core';
+import { render } from 'react-dom';
 
-  const useItemStyles = makeStyles({
-    root: {
-      padding: 16,
-    },
-    time: {
-      fontWeight: 'bold',
-    },
-  });
-
-export default function Cards( {route} ) {
+export default function Moka( {route} ) {
     const [isLoading, setIsLoading] = useState(true);
+    const [groups, setGroups] = useState(null);
     const [dataOdd, setDataOdd] = useState(null);
     const [dataEven, setDataEven] = useState(null);
     // console.log("params", route.params.id)
-useEffect(() => {
-    fetch('http://45.147.178.73/api/Schedule/' + route.params.id)
-        .then(response => response.json())
-        .then((responseJson) => {
-          setIsLoading(false);
-        //   console.log("Response is", responseJson.payload.odd);
+    useEffect(() => {
+        fetch('http://45.147.178.73/api/Schedule/' + route.params.id)
+            .then(response => response.json())
+            .then((responseJson) => {
+                setIsLoading(false);
+                //   console.log("Response is", responseJson.payload.odd);
 
-        setDataOdd(responseJson.payload.odd); 
-        setDataEven(responseJson.payload.even); 
-        }, () => {
-          // do something with new state
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-        
-  }, []);
+                setGroups(responseJson.payload); 
+                setDataOdd(responseJson.payload.odd); 
+                setDataEven(responseJson.payload.even); 
+            }, () => {
+                // do something with new state
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+            
+    }, []);
 
 //   console.log(data?.Понедельник);
     const classes = useItemStyles();
+    
+    var oddMap = [];
+    var evenMap = [];
+
+    console.log("dataEven", dataEven);
+    for(var i in dataOdd)
+    {
+        oddMap.push(dataOdd [i]);
+    }
+    for(var i in dataEven)
+    {
+        evenMap.push(dataEven [i]);
+    }
+    
+
     return (
-        <ScrollView style={styles.container}>
-            <Card className={classes.root}>
-                <Typography
-                    className={classes.time}
-                    variant="body1"
-                >{`$start}-end`}</Typography>
-                <Typography variant="body1">subjec</Typography>
-                <Typography variant="body1">{`$lecturerLastName $lecturerFirstName[0]. $lecturerPatronymic[0].`}</Typography>
-                <Typography variant="body1">desc</Typography>
-            </Card>
-            <Text style={styles.oglav}>Нечётная неделя</Text>
+        
+        <View>
+            { 
+                isLoading &&   
+                <View style={{ flex: 1, paddingTop: 20 }}>
+                    <ActivityIndicator />
+                </View>
+            }
+            { 
+            !isLoading && 
+            <ScrollView style={styles.container}>
 
-            <Text style={styles.weekday}>Понедельник</Text>
+                <Text style={styles.oglav}>Нечётная неделя</Text>
+                
+                {oddMap.map(item => 
+                    {
+                        var days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+                        console.log("days:", item)
+                        return( 
+                            <View>
+                                <Text style={styles.weekday}>Day</Text>
+                                {
+                                    item.map(el =>{
+                                        return(
+                                            <Card className={classes.root}>
+                                                <Typography className={classes.time} variant="body1">
+                                                    {`${el.start}-${el.end}`}
+                                                </Typography>
+
+                                                <Typography variant="body1">{el.subject}</Typography>
+
+                                                <Typography variant="body1">
+                                                    {`${el.lecturerLastName} ${el.lecturerFirstName[0]}. ${el.lecturerPatronymic[0]}.`}
+                                                </Typography>
+                                                    {el.desc && 
+                                                        <Typography variant="body1">{el.desc}</Typography>
+                                                    }
+                                            </Card>
+                                        )
+                                    })
+                                }
+                            </View>
+                            
+                        )
+                    }
+                )}
+
+                <Text style={styles.oglav}>Чётная неделя</Text>
             
-            <FlatList
-                scrollEnabled={false}
-                data={dataOdd?.Понедельник}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Text style={styles.paragraph}>
-                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                    </Text>
+                {evenMap.map(item => 
+                    {
+                        var days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+                        console.log("days2:", item)
+                        return( 
+                            <View>
+                                <Text style={styles.weekday}>Day</Text>
+                                {
+                                    item.map(el =>{
+                                        return(
+                                            <Card className={classes.root}>
+                                                <Typography className={classes.time} variant="body1">
+                                                    {`${el.start}-${el.end}`}
+                                                </Typography>
+                                                <Typography variant="body1">{el.subject}</Typography>
+                                                <Typography variant="body1">{`${el.lecturerLastName} ${el.lecturerFirstName[0]}. ${el.lecturerPatronymic[0]}.`}</Typography>
+                                                {el.desc && <Typography variant="body1">{el.desc}</Typography>}
+                                            </Card>
+                                        )
+                                    })
+                                }
+                            </View>
+                            
+                        )
+                    }
                 )}
-            />
 
-            <Text style={styles.weekday}>Вторник</Text>
-            <FlatList
-                scrollEnabled={false}
-                data={dataOdd?.Вторник}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Text style={styles.paragraph}>
-                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                    </Text>
-                )}
-            />
-
-            <Text style={styles.weekday}>Среда</Text>
-            <FlatList
-                scrollEnabled={false}
-                data={dataOdd?.Среда}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Text style={styles.paragraph}>
-                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                    </Text>
-                )}
-            />
-
-            <Text style={styles.weekday}>Четверг</Text>
-            <FlatList
-                scrollEnabled={false}
-                data={dataOdd?.Четверг}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Text style={styles.paragraph}>
-                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                    </Text>
-                )}
-            />
-
-            <Text style={styles.weekday}>Пятница</Text>
-            <FlatList
-                scrollEnabled={false}
-                data={dataOdd?.Пятница}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Text style={styles.paragraph}>
-                        {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                    </Text>
-                )}
-            />
-
-
-        <Text style={styles.oglav}>Чётная неделя</Text>
-
-        <Text style={styles.weekday}>Понедельник</Text>
-        <FlatList
-            scrollEnabled={false}
-            data={dataEven?.Понедельник}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-                <Text style={styles.paragraph}>
-                    {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                </Text>
-            )}
-        />
-
-        <Text style={styles.weekday}>Вторник</Text>
-        <FlatList
-            scrollEnabled={false}
-            data={dataEven?.Вторник}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-                <Text style={styles.paragraph}>
-                    {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                </Text>
-            )}
-        />
-
-        <Text style={styles.weekday}>Среда</Text>
-        <FlatList
-            scrollEnabled={false}
-            data={dataEven?.Среда}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-                <Text style={styles.paragraph}>
-                    {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                </Text>
-            )}
-        />
-
-        <Text style={styles.weekday}>Четверг</Text>
-        <FlatList
-            scrollEnabled={false}
-            data={dataEven?.Четверг}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-                <Text style={styles.paragraph}>
-                    {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                </Text>
-            )}
-        />
-
-        <Text style={styles.weekday}>Пятница</Text>
-        <FlatList
-            scrollEnabled={false}
-            data={dataEven?.Пятница}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-                <Text style={styles.paragraph}>
-                    {`${item?.subject}: ${item?.start} - ${item?.end}`}
-                </Text>
-            )}
-        />
-        </ScrollView>
+            </ScrollView>
+            }
+        </View>
     );
 }
 
@@ -197,7 +151,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     weekday: {
-        textAlign:'center',
+        // textAlign:'center',
         fontSize: 22,
         fontWeight: 'bold',
         color: '#fff',
@@ -210,15 +164,26 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
     },
-    card: {
-        backgroundColor: '#303030',
-    },
     oglav: {
         textAlign:'center',
         fontSize: 30,
         fontWeight: 'bold',
         color: '#fff',
         marginBottom: 20,
+    },
+});
+
+const useItemStyles = makeStyles({
+    root: {
+        margin: 5,
+        color: '#fff',
+        fontSize: 18,
+        backgroundColor: '#424242',
+        padding: 10,
+        borderRadius: 5,
+    },
+    time: {
+        fontWeight: 'bold',
     },
 });
 
