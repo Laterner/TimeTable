@@ -92,7 +92,8 @@ export default function Moka( {route} ) {
     {
         evenMap.push(dataEven [i]);
     }
-    console.log(MakeConnOdd);
+
+    console.log("days:", maroko);
 
     return (
         
@@ -112,7 +113,6 @@ export default function Moka( {route} ) {
                 {oddMap.map(item => 
                     {
                         var days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
-                        console.log("days:", item)
                         return( 
                             <View>
                                 <Text style={styles.weekday}>Day</Text>
