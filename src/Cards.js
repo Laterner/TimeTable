@@ -119,7 +119,7 @@ export default function Moka( {route} ) {
                                 {
                                     item.map(el =>{
                                         return(
-                                            <Card className={classes.root}>
+                                            <Card className={classes.card}>
                                                 <Typography className={classes.time} variant="body1">
                                                     {`${el.start}-${el.end}`}
                                                 </Typography>
@@ -154,7 +154,7 @@ export default function Moka( {route} ) {
                                 {
                                     item.map(el =>{
                                         return(
-                                            <Card className={classes.root}>
+                                            <Card className={classes.card}>
                                                 <Typography className={classes.time} variant="body1">
                                                     {`${el.start}-${el.end}`}
                                                 </Typography>
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
 });
 
 const useItemStyles = makeStyles({
-    root: {
+    card: {
         margin: 5,
         color: '#fff',
         fontSize: 18,
