@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { useMemo } from 'react';
+import { useMemo, Fragment} from 'react';
 
 import {
     AppBar,
@@ -14,12 +14,11 @@ import {
     Tab,
     Tabs,
     Typography,
-  } from '@material-ui/core';
+} from '@material-ui/core';
 import { render } from 'react-dom';
 
-export default function Moka(  ) {
+export default function Cards( {route} ) {
     const [isLoading, setIsLoading] = useState(true);
-    const [groups, setGroups] = useState(null);
     const [dataOdd, setDataOdd] = useState(null);
     const [dataEven, setDataEven] = useState(null);
     // console.log("params", route.params.id)
@@ -27,12 +26,12 @@ export default function Moka(  ) {
         fetch('http://45.147.178.73/api/Schedule/28')
             .then(response => response.json())
             .then((responseJson) => {
+                setDataOdd(responseJson.payload.odd); 
+                setDataEven(responseJson.payload.even); 
                 setIsLoading(false);
                 //   console.log("Response is", responseJson.payload.odd);
 
-                setGroups(responseJson.payload); 
-                setDataOdd(responseJson.payload.odd); 
-                setDataEven(responseJson.payload.even); 
+                
             }, () => {
                 // do something with new state
             })
@@ -42,13 +41,11 @@ export default function Moka(  ) {
             
     }, []);
 
-//   console.log(data?.Понедельник);
     const classes = useItemStyles();
     
     var oddMap = [];
     var evenMap = [];
 
-    console.log("dataEven", dataEven);
     for(var i in dataOdd)
     {
         oddMap.push(dataOdd [i]);
@@ -57,101 +54,78 @@ export default function Moka(  ) {
     {
         evenMap.push(dataEven [i]);
     }
-    
 
+    if (isLoading){
+        return(
+            <View style={{ flex: 1, paddingTop: 20 }}>
+                <ActivityIndicator />
+            </View>
+        )
+    }
     return (
-        
-        <View>
-            { 
-                isLoading &&   
-                <View style={{ flex: 1, paddingTop: 20 }}>
-                    <ActivityIndicator />
-                </View>
-            }
-            { 
-            !isLoading && 
-            <ScrollView style={styles.container}>
+        <ScrollView style={styles.container}>                
+            <Text style={styles.oglav}>Нечётная неделя</Text>
+            {
+                Object.keys(dataOdd).map(key => (
+                    <Typography>
+                        <Text style={styles.weekday}>{key}</Text>
+                        {dataOdd[key].map(item => (
+                            <Card className={classes.card}>
+                            <Typography className={classes.time}>
+                                {`${item.start}-${item.end}`}
+                            </Typography>
 
-                <Text style={styles.oglav}>Нечётная неделя</Text>
-                
-                {oddMap.map(item => 
-                    {
-                        var days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
-                        console.log("days:", item)
-                        return( 
-                            <View>
-                                <Text style={styles.weekday}>Day</Text>
-                                {
-                                    item.map(el =>{
-                                        return(
-                                            <Card className={classes.root}>
-                                                <Typography className={classes.time} variant="body1">
-                                                    {`${el.start}-${el.end}`}
-                                                </Typography>
+                            <Typography>{item.subject}</Typography>
 
-                                                <Typography variant="body1">{el.subject}</Typography>
-
-                                                <Typography variant="body1">
-                                                    {`${el.lecturerLastName} ${el.lecturerFirstName[0]}. ${el.lecturerPatronymic[0]}.`}
-                                                </Typography>
-                                                    {el.desc && 
-                                                        <Typography variant="body1">{el.desc}</Typography>
-                                                    }
-                                            </Card>
-                                        )
-                                    })
+                            <Typography>
+                                {`${item.lecturerLastName} ${item.lecturerFirstName[0]}. ${item.lecturerPatronymic[0]}.`}
+                            </Typography>
+                                {item.desc && 
+                                    <Typography>{item.desc}</Typography>
                                 }
-                            </View>
-                            
-                        )
-                    }
-                )}
-
-                <Text style={styles.oglav}>Чётная неделя</Text>
-            
-                {evenMap.map(item => 
-                    {
-                        var days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
-                        console.log("days2:", item)
-                        return( 
-                            <View>
-                                <Text style={styles.weekday}>Day</Text>
-                                {
-                                    item.map(el =>{
-                                        return(
-                                            <Card className={classes.root}>
-                                                <Typography className={classes.time} variant="body1">
-                                                    {`${el.start}-${el.end}`}
-                                                </Typography>
-                                                <Typography variant="body1">{el.subject}</Typography>
-                                                <Typography variant="body1">{`${el.lecturerLastName} ${el.lecturerFirstName[0]}. ${el.lecturerPatronymic[0]}.`}</Typography>
-                                                {el.desc && <Typography variant="body1">{el.desc}</Typography>}
-                                            </Card>
-                                        )
-                                    })
-                                }
-                            </View>
-                            
-                        )
-                    }
-                )}
-
-            </ScrollView>
+                        </Card>
+                        ))}
+                    </Typography>
+                ))
             }
-        </View>
+
+            <Text style={styles.oglav}>Чётная неделя</Text>
+            {
+                Object.keys(dataEven).map(key => (
+                    <Typography>
+                        <Text style={styles.weekday}>{key}</Text>
+                        {dataEven[key].map(item => (
+                            <Card className={classes.card}>
+                            <Typography className={classes.time}>
+                                {`${item.start}-${item.end}`}
+                            </Typography>
+
+                            <Typography>{item.subject}</Typography>
+
+                            <Typography>
+                                {`${item.lecturerLastName} ${item.lecturerFirstName[0]}. ${item.lecturerPatronymic[0]}.`}
+                            </Typography>
+                                {item.desc && 
+                                    <Typography>{item.desc}</Typography>
+                                }
+                        </Card>
+                        ))}
+                    </Typography>
+                ))
+            }
+
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        // justifyContent: 'center',
         flex: 1,
-        paddingTop: Constants.statusBarHeight,
+        paddingTop: Constants.statusBarHeight + 10,
         backgroundColor: '#303030',
-        padding: 5,
+        padding: 20,
     },
     weekday: {
-        // textAlign:'center',
         fontSize: 22,
         fontWeight: 'bold',
         color: '#fff',
@@ -169,50 +143,20 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         color: '#fff',
-        marginBottom: 20,
+        marginBottom: 10,
     },
 });
 
 const useItemStyles = makeStyles({
-    root: {
-        margin: 5,
+    card: {
         color: '#fff',
         fontSize: 18,
         backgroundColor: '#424242',
         padding: 10,
         borderRadius: 5,
+        marginBottom: 10,
     },
     time: {
         fontWeight: 'bold',
-    },
-});
-
-const useStyles = makeStyles({
-    appBar: {
-        height: 64,
-        alignItems: 'center',
-        flexDirection: 'row',
-        padding: '0 16px',
-    },
-    logo: {
-        width: 48,
-        height: 48,
-        marginRight: 16,
-    },
-    heading: {
-        fontSize: 24,
-    },
-    container: {
-        marginTop: 64,
-        padding: 16,
-    },
-    card: {
-        padding: 16,
-        overflow: 'visible',
-        marginBottom: 16,
-    },
-    cardText: {
-        fontSize: 18,
-        marginBottom: 16,
     },
 });

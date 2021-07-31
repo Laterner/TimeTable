@@ -37,7 +37,8 @@ export default function GropSelector( {navigation} ) {
 
     const [name_filter, set_filter] = useState('');
     var gog = groups?.filter(item => item.name.includes(name_filter.toUpperCase()));
-    
+
+
     return (
         <View id="non" style={styles.container}>
             <Card className={classes.card}>
