@@ -37,7 +37,7 @@ export default function App(){
         <Stack.Navigator>
             <Stack.Screen 
                 name="GropSelector"
-                component={GropSelector}
+                component={Moka}
                 options={{title:'Выбор группы'}}
                 />
             <Stack.Screen 

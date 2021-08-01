@@ -1,118 +1,85 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { ScrollView } from 'react-native';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { useMemo, Fragment} from 'react';
 
 import {
-    AppBar,
     Card,
     Container,
-    Tab,
-    Tabs,
     Typography,
 } from '@material-ui/core';
-import { render } from 'react-dom';
 
-export default function Cards( {route} ) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [dataOdd, setDataOdd] = useState(null);
-    const [dataEven, setDataEven] = useState(null);
-    // console.log("params", route.params.id)
-    useEffect(() => {
-        fetch('http://45.147.178.73/api/Schedule/28')
-            .then(response => response.json())
-            .then((responseJson) => {
-                setDataOdd(responseJson.payload.odd); 
-                setDataEven(responseJson.payload.even); 
-                setIsLoading(false);
-                //   console.log("Response is", responseJson.payload.odd);
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
-                
-            }, () => {
-                // do something with new state
-            })
-                .catch((error) => {
-                console.error(error);
-            });
-            
-    }, []);
+import TableOptions from './TableOptions';
+
+import TableTomorrow from './TableTomorrow';
+
+
+export default function Moka( {route} ) {
+    
+    function returnCurrentDay(jo = 0){
+        const days = [
+            'Воскресенье',
+            'Понедельник',
+            'Вторник',
+            'Среда',
+            'Четверг',
+            'Пятница',
+            'Суббота'
+        ];
+        const currentDayIndex = new Date().getUTCDay() + jo;
+        // console.warn("currentDay:", days[currentDayIndex]);
+        return days[currentDayIndex];
+    }
+
+    const currentDay = returnCurrentDay();
+    const tomorrowDay = returnCurrentDay(1);
 
     const classes = useItemStyles();
     
-    var oddMap = [];
-    var evenMap = [];
-
-    for(var i in dataOdd)
-    {
-        oddMap.push(dataOdd [i]);
-    }
-    for(var i in dataEven)
-    {
-        evenMap.push(dataEven [i]);
+    const [activeTabIndex, setActiveTabIndex] = useState(0);
+    const handleChange = (event, value) => {
+        setActiveTabIndex(value);
     }
 
-    if (isLoading){
-        return(
-            <View style={{ flex: 1, paddingTop: 20 }}>
-                <ActivityIndicator />
-            </View>
-        )
+    function TabPanel(props) {
+        const {children, value, index} = props;
+        return (
+            <div>
+            {
+                value === index &&
+                <h1>{children}</h1>
+            }
+            </div>
+        );
     }
+
     return (
-        <ScrollView style={styles.container}>                
-            <Text style={styles.oglav}>Нечётная неделя</Text>
-            {
-                Object.keys(dataOdd).map(key => (
-                    <Typography>
-                        <Text style={styles.weekday}>{key}</Text>
-                        {dataOdd[key].map(item => (
-                            <Card className={classes.card}>
-                            <Typography className={classes.time}>
-                                {`${item.start}-${item.end}`}
-                            </Typography>
+        <ScrollView style={styles.container}>
+            <Tabs className={classes.tabs} value={activeTabIndex} onChange={handleChange} aria-label="simple tabs example">
+                <Tab label="ВСЕ"/>
+                <Tab label="СЕГОДНЯ"  />
+                <Tab label="ЗАВТРА"  />
+            </Tabs>
+            
+            <TabPanel value={activeTabIndex} index={0}> 
+                <TableOptions groupID={route.id}/>
+            </TabPanel>
 
-                            <Typography>{item.subject}</Typography>
+            <TabPanel value={activeTabIndex} index={1}>
+            {currentDay}
+            </TabPanel>
 
-                            <Typography>
-                                {`${item.lecturerLastName} ${item.lecturerFirstName[0]}. ${item.lecturerPatronymic[0]}.`}
-                            </Typography>
-                                {item.desc && 
-                                    <Typography>{item.desc}</Typography>
-                                }
-                        </Card>
-                        ))}
-                    </Typography>
-                ))
-            }
-
-            <Text style={styles.oglav}>Чётная неделя</Text>
-            {
-                Object.keys(dataEven).map(key => (
-                    <Typography>
-                        <Text style={styles.weekday}>{key}</Text>
-                        {dataEven[key].map(item => (
-                            <Card className={classes.card}>
-                            <Typography className={classes.time}>
-                                {`${item.start}-${item.end}`}
-                            </Typography>
-
-                            <Typography>{item.subject}</Typography>
-
-                            <Typography>
-                                {`${item.lecturerLastName} ${item.lecturerFirstName[0]}. ${item.lecturerPatronymic[0]}.`}
-                            </Typography>
-                                {item.desc && 
-                                    <Typography>{item.desc}</Typography>
-                                }
-                        </Card>
-                        ))}
-                    </Typography>
-                ))
-            }
+            <TabPanel value={activeTabIndex} index={2}>
+            
+            <TableTomorrow tomorrowDay={tomorrowDay}/>
+            </TabPanel>
 
         </ScrollView>
     );
@@ -124,39 +91,15 @@ const styles = StyleSheet.create({
         paddingTop: Constants.statusBarHeight + 10,
         backgroundColor: '#303030',
         padding: 20,
-    },
-    weekday: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
-    paragraph: {
-        margin: 5,
-        color: '#fff',
-        fontSize: 18,
-        backgroundColor: '#424242',
-        padding: 10,
-        borderRadius: 5,
-    },
-    oglav: {
-        textAlign:'center',
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 10,
-    },
+    }
 });
 
 const useItemStyles = makeStyles({
-    card: {
+    tabs: {
         color: '#fff',
         fontSize: 18,
-        backgroundColor: '#424242',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
     },
     time: {
         fontWeight: 'bold',
-    },
+    }
 });
