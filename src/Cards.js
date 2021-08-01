@@ -5,7 +5,6 @@ import { ScrollView } from 'react-native';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { useMemo, Fragment} from 'react';
 
 import {
     Card,
@@ -19,7 +18,11 @@ import Tab from '@material-ui/core/Tab';
 
 import TableOptions from './TableOptions';
 
+import TableTomorrow from './TableTomorrow';
+
+
 export default function Cards( {route} ) {
+    
     function returnCurrentDay(jo = 0){
         const days = [
             'Воскресенье',
@@ -31,7 +34,7 @@ export default function Cards( {route} ) {
             'Суббота'
         ];
         const currentDayIndex = new Date().getUTCDay() + jo;
-        // console.warn("currentDay:", require('./API'));
+        // console.warn("currentDay:", days[currentDayIndex]);
         return days[currentDayIndex];
     }
 
@@ -56,7 +59,7 @@ export default function Cards( {route} ) {
             </div>
         );
     }
-
+    
     return (
         <ScrollView style={styles.container}>
             <Tabs className={classes.tabs} value={activeTabIndex} onChange={handleChange} aria-label="simple tabs example">
@@ -66,14 +69,17 @@ export default function Cards( {route} ) {
             </Tabs>
             
             <TabPanel value={activeTabIndex} index={0}> 
-                <TableOptions groupID={route.id}/>
+                <TableOptions groupID={route.params.id}/>
             </TabPanel>
+
             <TabPanel value={activeTabIndex} index={1}>
             {currentDay}
             </TabPanel>
+
             <TabPanel value={activeTabIndex} index={2}>
-            {tomorrowDay}
+                <TableTomorrow groupID={route.params.id}  tomorrowDay={tomorrowDay}/>
             </TabPanel>
+
         </ScrollView>
     );
 }

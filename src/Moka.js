@@ -77,8 +77,7 @@ export default function Moka( {route} ) {
             </TabPanel>
 
             <TabPanel value={activeTabIndex} index={2}>
-            
-            <TableTomorrow tomorrowDay={tomorrowDay}/>
+                <TableTomorrow groupID={route.id}  tomorrowDay={tomorrowDay}/>
             </TabPanel>
 
         </ScrollView>

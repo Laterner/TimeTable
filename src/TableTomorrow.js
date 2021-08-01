@@ -11,13 +11,13 @@ import {
     Typography,
 } from '@material-ui/core';
 
-export default function TableTomorrow ( {tomorrowDay} ) {
+export default function TableTomorrow ( {groupID, tomorrowDay} ) {
     const [isLoading, setIsLoading] = useState(true);
     const [dataToday, setDataToday] = useState(null);
 
-    // console.log("params", route.params.id)
+    console.log("params", groupID)
     useEffect(() => {
-        fetch('http://45.147.178.73/api/Schedule/28?filter=tomorrow')
+        fetch('http://45.147.178.73/api/Schedule/' + groupID + '?filter=tomorrow')
             .then(response => response.json())
             .then((responseJson) => {
                 setDataToday(responseJson.payload.items); 

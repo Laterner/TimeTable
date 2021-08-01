@@ -68,7 +68,9 @@ export default function GropSelector( {navigation} ) {
                     data={gog}
                     keyExtractor={item => item.id}
                     renderItem={({ item }) => (
-                        <TouchableHighlight onPress={() => navigation.navigate('Cards', item)}>
+                        <TouchableHighlight onPress={() => {
+                            navigation.navigate('Cards', item)
+                        }}>
                             <Text style={styles.paragraph}>
                                     {item?.name}
                             </Text>
